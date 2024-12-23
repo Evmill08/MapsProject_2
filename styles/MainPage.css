@@ -1,0 +1,155 @@
+/* Main page body with black background */
+body {
+    background-color: black;
+    margin: 0;
+}
+
+/* Header with fixed position at the top */
+.mainPageHeader {
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 75px; 
+    background-color: black;
+    color: white;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    margin: 0;
+    padding: 0;
+    z-index: 1000;
+}
+
+/* Map container with beige background, with margin from edges */
+.mapContainer {
+    position: absolute; 
+    top: 75px; 
+    left: 15px; 
+    right: 15px; 
+    bottom: 15px;
+    background-color: beige; 
+    box-sizing: border-box; 
+    padding: 0; 
+}
+
+/* Ensure the map fills the entire map container */
+.mapContainer > #mapContainer {
+    width: 100%; 
+    height: 100%; 
+}
+
+/* Search box container */
+.searchBox {
+    background-color: white;
+    width: 20%; /* Adjust width as necessary */
+    height: auto; /* Adjust height to fit the content */
+    z-index: 2000;
+    position: absolute;
+    top: 10%;
+    left: 1.5%;
+    border-radius: 10px;
+    box-shadow: 1px 1px 3px rgb(130, 130, 130);
+    padding: .5%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Search bar */
+.searchBar {
+    width: 100%;
+    display: flex;
+    align-items: center; /* Align the textarea and button vertically */
+}
+
+/* Textarea (Search input) */
+.textarea {
+    width: 80%;         /* Set width for textarea to leave room for the button */
+    height: 30px;       /* Set a fixed height */
+    padding: 10px;      /* Add padding */
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    resize: none;        /* Disable resizing */
+    overflow: hidden;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: lighter;
+    font-stretch: expanded;
+}
+
+/* Placeholder styling */
+.textarea::placeholder {
+    color: #888; /* Placeholder text color */
+    font-style: italic; /* Optional: makes placeholder text italic */
+}
+
+/* Search button */
+.SearchButton {
+    text-align: center;
+    margin-left: 10px;
+    padding: 10px 15px;
+    height: 30px; 
+    font-size: 16px;
+    background-color: #2479be;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: lighter;
+    font-stretch: expanded;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Center text vertically */
+    line-height: 30px;  /* Ensure text is centered vertically in button */
+}
+
+/* Search button hover effect */
+.SearchButton:hover {
+    background-color: #2a5eac; /* Button hover color */
+}
+
+.quickButtonBox{
+    position: absolute;
+    border-width: 10px;
+    top: 10%;
+    left: 22%;
+    display: inline;
+    list-style-type: none;
+    text-align: center;
+    border-width: 10px;
+    border-color: black;
+    width: 25%;
+}
+
+.quickButtonBox li{
+    display: inline-block;
+    padding-right: 1%;
+}
+
+.quickButtonBox button{
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: lighter;
+    font-stretch: expanded;
+    text-align: center;
+    box-shadow: 1px 1px 3px rgb(130, 130, 130);
+}
+
+.quickButtonBox button:hover{
+    background-color: #ececec;
+    cursor: pointer;
+}
