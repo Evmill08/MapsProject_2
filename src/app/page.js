@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
+import { handleQuickButtonPressed } from "../../public/js/quick_search";
 import Head from "next/head";
 import { loadMapApi } from "../../public/js/map";
 import '../../styles/MainPage.css'
@@ -23,12 +23,6 @@ export default function Home() {
       event.preventDefault();
     }
   }
-
-  const handleQuickButtonPressed = (event) => {
-    console.log(event.target.innerText);
-  };
-
-
   useEffect(() => {
     loadMapApi();
   }, []); 
@@ -64,11 +58,11 @@ export default function Home() {
         </div>
 
         <ul className="quickButtonBox">
-          <li><button type="submit" className="restaurantButton" onClick={handleQuickButtonPressed}>Restaurants</button></li>
-          <li><button type="submit" className="hotelButton" onClick={handleQuickButtonPressed}>Hotels</button></li>
-          <li><button type="submit" className="parkButton" onClick={handleQuickButtonPressed}>Parks</button></li>
-          <li><button type="submit" className="museumButton" onClick={handleQuickButtonPressed}>Museums</button></li>
-          <li><button type="submit" className="historyButton" onClick={handleQuickButtonPressed}>History</button></li>
+          <li><button type="submit" className="restaurantButton" onClick={(e) => handleQuickButtonPressed(e)}>Restaurants</button></li>
+          <li><button type="submit" className="hotelButton" onClick={(e) => handleQuickButtonPressed(e)}>Hotels</button></li>
+          <li><button type="submit" className="parkButton" onClick={(e) => handleQuickButtonPressed(e)}>Parks</button></li>
+          <li><button type="submit" className="museumButton" onClick={(e) => handleQuickButtonPressed(e)}>Museums</button></li>
+          <li><button type="submit" className="shoppingButton" onClick={(e) => handleQuickButtonPressed(e)}>Shopping</button></li>
         </ul>
       </body>
     </>

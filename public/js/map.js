@@ -1,7 +1,15 @@
 import { apikey } from "./credentials";
 
+let map = null;
+let ui = null;
+
 // Function to initialize the map
 export const initializeMap = () => {
+
+  if (map){
+    return map;
+  }
+
   // Initialize the HERE Platform with the JS API key
   const platform = new H.service.Platform({
     apikey: apikey, 
@@ -17,7 +25,7 @@ export const initializeMap = () => {
 
   // Ensure the container exists before initializing the map
   if (mapContainer) {
-    const map = new H.Map(
+    map = new H.Map(
       mapContainer,
       defaultLayers.vector.normal.map, // Initial base layer
       {
@@ -27,7 +35,7 @@ export const initializeMap = () => {
     );
 
     // Initialize the UI components for the map
-    var ui = H.ui.UI.createDefault(map, defaultLayers);
+    ui = H.ui.UI.createDefault(map, defaultLayers);
 
     // The behavior variable implements default interactions for pan/zoom (also on mobile touch environments).
     const behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
@@ -87,7 +95,12 @@ export const initializeMap = () => {
     ui.addControl("distancemeasurement", distanceMeasurementTool);
     ui.setUnitSystem(H.ui.UnitSystem.IMPERIAL);
   }
+
+  return map;
 };
+
+export const getMapInstance = () => map;
+export const getUIInstance = () => ui;
 
 // Dynamically load the HERE API scripts
 export const loadScript = (src) => {
@@ -107,7 +120,7 @@ const loadScriptWithRetry = async (src, retries = 5) => {
   } catch (error) {
     if (retries > 0 && error.message.includes('429')) {
       console.warn("Rate limit exceeded. Retrying in 1 second...");
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Delay before retry
+      await new Promise(resolve => setTimeout(resolve, 1000));
       return loadScriptWithRetry(src, retries - 1);
     } else {
       console.error("Error loading script:", error);
