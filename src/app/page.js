@@ -5,24 +5,25 @@ import { handleQuickButtonPressed } from "../../public/js/quick_search";
 import Head from "next/head";
 import { loadMapApi } from "../../public/js/map";
 import '../../styles/MainPage.css'
+import { MapSearch } from "../../public/js/map_search";
 
 export default function Home() {
-  // Place holder stuff, we will abstract this into a different file and handle it there
-  const [searchQuery, setSearchQuery] = useState("")
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value)
-  };
-
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
-    console.log("Search Query:", searchQuery);
-  };
+  const {
+    query,
+    suggestions,
+    isLoading,
+    showSuggestions,
+    handleInputChange,
+    handleSuggestionClick,
+    setShowSuggestions
+  } = MapSearch();
 
   const handleEnterKeyDown = (event) => {
     if (event.key == "Enter"){
       event.preventDefault();
     }
   }
+
   useEffect(() => {
     loadMapApi();
   }, []); 
@@ -43,18 +44,36 @@ export default function Home() {
         <div className="mapContainer" id="mapContainer"></div>
 
         <div className="searchBox" id="searchBox">
-          <form id="searchForm" onSubmit={handleSearchSubmit}>
+          <form id="searchForm" onSubmit={(e) => e.preventDefault()}>
             <div className="searchBar">
               <textarea
                 className="textarea"
                 placeholder="Search our Map..."
-                value={searchQuery}
-                onChange={handleSearchChange}
+                value={query}
+                onChange={handleInputChange}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                onFocus={() => query && setShowSuggestions(true)}
                 onKeyDown={handleEnterKeyDown}
               ></textarea>
               <button type="submit" className="SearchButton" onClick={handleSearchSubmit}>Search</button>
             </div>
           </form>
+
+          {showSuggestions && (suggestions.length > 0 || isLoading) && (
+            <div className="suggestions-container">
+              {isLoading ? (
+                <div className="suggestion-item">Loading...</div>
+              ) : (
+                suggestions.map((suggestion) => (
+                  <div key={suggestion.id} className="suggestion-item" onClick={() => handleSuggestionClick(suggestion)}>
+                    <div className="suggestion-title">{suggestion.title}</div>
+                    <div className="suggestion-address">{suggestion.address?.label}</div>
+                  </div>
+                ))
+              )}
+            </div>
+              
+          )}
         </div>
 
         <ul className="quickButtonBox">

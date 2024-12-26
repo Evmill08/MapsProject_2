@@ -15,7 +15,7 @@ const getCategory = (place) => {
     return categories[place] || null;
 };
 
-const getUserLocation = async () => {
+export const getUserLocation = async () => {
     return new Promise((resolve, reject) => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -112,15 +112,33 @@ const addMarkersToMap = (locations) => {
         
         // Create formatted content for info bubble
         const content = `
-            <div style="padding: 8px;">
-                <b>${location.name}</b>
-                <p style="margin: 5px 0;">${location.address}</p>
-                <p style="margin: 5px 0;">${(location.distance / 1000).toFixed(1)} km away</p>
+            <div style="padding: 8px; font-family: Arial, sans-serif; max-width: 200px;">
+                <b style="font-size: 16px; color: #333;">${location.name}</b>
+                <p style="margin: 5px 0; font-size: 14px; color: #666;">${location.address}</p>
+                <p style="margin: 5px 0; font-size: 14px; color: #666;">${(location.distance / 1000).toFixed(1)} km away</p>
+                <button 
+                    style="
+                        background-color: #4A90E2; 
+                        color: white; 
+                        border: none; 
+                        padding: 8px 12px; 
+                        border-radius: 4px; 
+                        cursor: pointer; 
+                        font-size: 14px;
+                        text-align: center;
+                    "
+                    id="get-directions-${location.position.lat}-${location.position.lng}"
+                >
+                    Get Directions
+                </button>
             </div>
         `;
         
         marker.setData(content);
         group.addObject(marker);
+
+        const buttonId = `get-directions-${location.position.lat}-${location.position.lng}`;
+        document.getElementById(buttonId)?.addEventListener('click', () => getDirections(location.position));
     });
 
     // Add event listener to the group
@@ -147,6 +165,12 @@ const addMarkersToMap = (locations) => {
         });
     }
 };
+
+// For testing
+function getDirections(coords){
+    alert('Providing directions to: ' + coords.lat + ',' + coords.lng);
+    console.log('Providing directions to: ', coords);
+}
 
 let debounceTimer;
 export const handleQuickButtonPressed = async (event) => {
