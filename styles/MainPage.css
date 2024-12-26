@@ -157,29 +157,57 @@ body {
 .suggestions-container {
     position: absolute;
     width: 100%;
-    max-height: 300px;
+    max-height: 200px;
     overflow-y: auto;
-    background: white;
+    background-color: white;
     border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-top: 4px;
+    border-radius: 0 0 4px 4px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 1000;
+    top: 100%;
+    left: 0;
+    margin-top: 2px;
 }
-  
+
+/* Suggestion item */
 .suggestion-item {
     padding: 8px 12px;
     cursor: pointer;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease;
 }
-  
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
 .suggestion-item:hover {
     background-color: #f5f5f5;
 }
-  
+
+/* Suggestion content styling */
 .suggestion-title {
-    font-weight: 500;
+    font-weight: bold;
+    margin-bottom: 2px;
 }
-  
+
 .suggestion-address {
     font-size: 0.9em;
     color: #666;
+}
+
+/* Loading state */
+.suggestion-item.loading {
+    text-align: center;
+    color: #666;
+    padding: 12px;
+    cursor: default;
+}
+
+/* No results state */
+.suggestion-item.no-results {
+    text-align: center;
+    color: #666;
+    padding: 12px;
+    cursor: default;
 }

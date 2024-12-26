@@ -1,69 +1,89 @@
 import { apikey } from "./credentials";
 import { getUserLocation } from "./quick_search";
-import React, {useState} from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
-export const MapSearch = ({onLocationSelection}) => {
+export const MapSearch = () => {
     const [query, setQuery] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [userLocation, setUserLocation] = useState(null);
 
-    const fetchSuggestions = async (searchQuery) => {
-        if (!searchQuery.trim()) {
-          setSuggestions([]);
-          return;
+    useEffect(() => {
+      const fetchLocation = async () => {
+        try {
+          const location = await getUserLocation();
+          setUserLocation(location);
+        } catch (error) {
+          console.error("Error getting user location: ", error);
         }
-    
+      };
+
+      fetchLocation();
+    }, []);
+
+
+    const fetchSuggestions = useCallback(async (searchQuery) => {
+        if (!searchQuery.trim()) {
+            setSuggestions([]);
+            return;
+        }
+
+        const url = `https://autosuggest.search.hereapi.com/v1/autosuggest` +
+          `?at=${userLocation.lat},${userLocation.lng}` +
+          `&limit=5` +
+          `&q=${encodeURIComponent(searchQuery)}` +
+          `&apiKey=${apikey}`;
+
         setIsLoading(true);
         try {
-          const response = await fetch(
-            `https://autosuggest.search.hereapi.com/v1/autosuggest?q=${encodeURIComponent(searchQuery)}&apiKey=${apikey}&limit=5`
-          );
-          const data = await response.json();
-          setSuggestions(data.items || []);
+            const response = await fetch(url);
+            if (!response.ok){
+              throw new Error("HTTP Error. Status: ", response.status);
+            }
+            const data = await response.json();
+            setSuggestions(data.items || []);
         } catch (error) {
-          console.error('Error fetching suggestions:', error);
-          setSuggestions([]);
+            console.error('Error fetching suggestions:', error);
+            setSuggestions([]);
         } finally {
-          setIsLoading(false);
+            setIsLoading(false);
         }
-      };
+    }, [userLocation]);
 
-      const handleInputChange = (event) => {
+    const handleInputChange = (event) => {
         const value = event.target.value;
         setQuery(value);
-        setShowSuggestions(true);
-    
-        const timeoutId = setTimeout(() => {
-          fetchSuggestions(value);
-        }, 300);
-    
-        return () => clearTimeout(timeoutId);
-      };
+        
+        if (value.trim()) {
+            setShowSuggestions(true);
+            const timeoutId = setTimeout(() => {
+                fetchSuggestions(value);
+            }, 300);
+            return () => clearTimeout(timeoutId);
+        } else {
+            setShowSuggestions(false);
+            setSuggestions([]);
+        }
+    };
 
-      const handleSuggestionClick = (suggestion) => {
+    const handleSuggestionClick = (suggestion) => {
         setQuery(suggestion.title);
         setSuggestions([]);
         setShowSuggestions(false);
-        if (onLocationSelect) {
-          onLocationSelect({
-            title: suggestion.title,
-            lat: suggestion.position?.lat,
-            lng: suggestion.position?.lng
-          });
-        }
-      };
+    };
 
-      return {
+    return {
         query,
         suggestions,
         isLoading,
         showSuggestions,
         handleInputChange,
         handleSuggestionClick,
-        setShowSuggestions
-      };
-}
+        setShowSuggestions,
+        userLocation
+    };
+};
 
 
 

@@ -21,6 +21,7 @@ export default function Home() {
   const handleEnterKeyDown = (event) => {
     if (event.key == "Enter"){
       event.preventDefault();
+      setShowSuggestions(false);
     }
   }
 
@@ -52,24 +53,34 @@ export default function Home() {
                 value={query}
                 onChange={handleInputChange}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                onFocus={() => query && setShowSuggestions(true)}
+                onFocus={() => {
+                  if (query.trim()){
+                    setShowSuggestions(true);
+                  }
+                }}
                 onKeyDown={handleEnterKeyDown}
               ></textarea>
-              <button type="submit" className="SearchButton" onClick={handleSearchSubmit}>Search</button>
+              <button type="submit" className="SearchButton" onClick={() => {
+                if (suggestions.length > 0) {
+                  handleSuggestionClick(suggestions[0]);
+                }
+              }}>Search</button>
             </div>
           </form>
 
-          {showSuggestions && (suggestions.length > 0 || isLoading) && (
+          {showSuggestions && (
             <div className="suggestions-container">
               {isLoading ? (
                 <div className="suggestion-item">Loading...</div>
-              ) : (
+              ) : suggestions.length > 0 ? (
                 suggestions.map((suggestion) => (
                   <div key={suggestion.id} className="suggestion-item" onClick={() => handleSuggestionClick(suggestion)}>
                     <div className="suggestion-title">{suggestion.title}</div>
                     <div className="suggestion-address">{suggestion.address?.label}</div>
                   </div>
                 ))
+              ) : (
+                <div className="suggestion-item">No Results</div>
               )}
             </div>
               
