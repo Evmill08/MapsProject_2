@@ -86,10 +86,10 @@ const makeMultipleApiCalls = async (place_codes, user_location) => {
 };
 
 const addMarkersToMap = (locations) => {
-    const map = getMapInstance();
+    const mapInstance = getMapInstance();
     const ui = getUIInstance();
     
-    if (!map || !ui) {
+    if (!mapInstance.map || !ui) {
         console.error("Map or UI not initialized. Cannot add markers.");
         return;
     }
@@ -101,7 +101,7 @@ const addMarkersToMap = (locations) => {
     const icon = new H.map.Icon(svgMarkup);
 
     // Remove existing markers and bubbles
-    map.removeObjects(map.getObjects());
+    mapInstance.map.removeObjects(mapInstance.map.getObjects());
     ui.getBubbles().forEach(bubble => ui.removeBubble(bubble));
 
     // Add new markers with labels
@@ -156,11 +156,11 @@ const addMarkersToMap = (locations) => {
         ui.addBubble(bubble);
     });
 
-    map.addObject(group);
+    mapInstance.map.addObject(group);
 
     // Adjust viewport to show all markers
     if (locations.length > 0) {
-        map.getViewModel().setLookAtData({
+        mapInstance.map.getViewModel().setLookAtData({
             bounds: group.getBoundingBox()
         });
     }
@@ -181,12 +181,12 @@ export const handleQuickButtonPressed = async (event) => {
     debounceTimer = setTimeout(async () => {
         try {
             // Get or initialize map first
-            let map = getMapInstance();
-            if (!map) {
+            let mapInstance = getMapInstance();
+            if (!mapInstance.map) {
                 console.log("Initializing Map...");
                 await loadMapApi();
-                map = initializeMap();
-                if (!map) {
+                mapInstance = initializeMap();
+                if (!mapInstance.map) {
                     console.error("Initialization of Map Failed.");
                     return;
                 }
