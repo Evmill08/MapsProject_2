@@ -7,6 +7,7 @@ import { initializeMap, loadMapApi, getMapInstance } from "../../public/js/map";
 import '../../styles/MainPage.css'
 import { MapSearch } from "../../public/js/map_search";
 import {handleRouteService } from "../../public/js/route_service";
+import QuickSearchSidebar from './QuickSearch_sidebar';
 
 export default function Home() {
   const {
@@ -20,6 +21,7 @@ export default function Home() {
   } = MapSearch();
 
   const [mapError, setMapError] = useState(null);
+  const [isSideBarOpen, setIsSideBarOpen] = useState(false);
 
   const handleEnterKeyDown = (event) => {
     if (event.key == "Enter"){
@@ -28,27 +30,7 @@ export default function Home() {
     }
   }
 
-  
-  const handleTestRoute = async () => {
-    try {
-      const mapInstance = getMapInstance();
-      console.log("Map instance:", mapInstance);
-      
-      if (!mapInstance?.map || !mapInstance?.platform) {
-          setMapError("Map is not yet initialized. Please wait a moment and try again.");
-          return;
-      }
 
-      await calculateRouteFromAtoB(
-          mapInstance.platform,
-          { lat: 39.58956, lng: -76.06569 },
-          { lat: 39.577, lng: -76.07 }
-      );
-    } catch (error) {
-        console.error("Route test error:", error);
-        setMapError(`Error calculating route: ${error.message}`);
-    }
-  };
 
   useEffect(() => {
     loadMapApi();
@@ -133,8 +115,10 @@ export default function Home() {
           <li><button type="button" className="parkButton" onClick={handleQuickButtonPressed}>Parks</button></li>
           <li><button type="button" className="museumButton" onClick={handleQuickButtonPressed}>Museums</button></li>
           <li><button type="button" className="shoppingButton" onClick={handleQuickButtonPressed}>Shopping</button></li>
-          <li><button type="button" className="testRouteButton" onClick={handleRouteService}>Test Route</button></li>
+          <li><button type="button" className="moreButton" onClick={() => setIsSideBarOpen(true)}>More</button></li>
         </ul>
+
+        <QuickSearchSidebar isOpen={isSideBarOpen} onClose={() => setIsSideBarOpen(false)}/>
       </div>
     </>
   );

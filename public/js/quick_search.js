@@ -1,18 +1,11 @@
 // quick_search.js
 import { apikey } from "./credentials";
+import { getCategoryCode } from "./categories";
 import { loadMapApi, initializeMap, getMapInstance, getUIInstance } from "./map";
 
-let map;
 
 const getCategory = (place) => {
-    const categories = {
-        Restaurants: ["100-1000-0000", "100-1100-0000"],
-        Hotels: ["500-5000-0000", "500-5100-0000"],
-        Parks: ["550-5510-0000", "550-5520-0000"],
-        Museums: "300-3100-0000",
-        Shopping: ["600-6900-0000", "600-6000-0061", "600-6000-0062","600-6000-0063", "600-6300-0064"]
-    };
-    return categories[place] || null;
+    return [getCategoryCode(place)];
 };
 
 export const getUserLocation = async () => {
