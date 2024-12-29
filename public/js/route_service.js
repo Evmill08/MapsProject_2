@@ -279,9 +279,6 @@ function onError(error, reject) {
 }
 
 export const handleRouteService = async (dest, origin) => {
-    // TODO: pass in coords for dest and origin
-    dest = {lat: 42.33820, lng: -71.02918};
-    origin = {lat: 39.57681, lng: -76.06998};
     try {
         const mapInstance = getMapInstance();
 

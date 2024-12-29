@@ -19,7 +19,7 @@ export const initializeMap = () => {
 
       // Create default map layers
       const defaultLayers = platform.createDefaultLayers();
-      const overviewLayers = platform.createDefaultLayers();
+
 
       // Get the map container element
       const mapContainer = document.getElementById("mapContainer");
@@ -35,6 +35,7 @@ export const initializeMap = () => {
         {
           zoom: 10,
           center: { lat: 39.6, lng: -76.1 },
+          pixelRatio: window.devicePixelRatio || 1
         }
       );
 
@@ -45,15 +46,7 @@ export const initializeMap = () => {
       const behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
 
       // Enable dynamic resizing of the map
-      window.addEventListener('resize', () => map.getViewPort().resize());
-
-      // Add the overview control after map initialization
-      const overviewMap = new H.ui.Overview(overviewLayers.raster.satellite.map, {
-        alignment: H.ui.LayoutAlignment.LEFT_BOTTOM,
-        zoomDelta: 6,
-        scaleX: 5,
-        scaleY: 6
-      });
+      window.addEventListener('resize', () => map.getViewPort().resize());      
 
       const zoomRectangle = new H.ui.ZoomRectangle({
         alignment: H.ui.LayoutAlignment.RIGHT_BOTTOM
@@ -88,7 +81,6 @@ export const initializeMap = () => {
         alignment: H.ui.LayoutAlignment.RIGHT_BOTTOM
       });
 
-      ui.addControl('overview', overviewMap);
       ui.addControl('rectangle', zoomRectangle);
       ui.addControl("distancemeasurement", distanceMeasurementTool);
       ui.setUnitSystem(H.ui.UnitSystem.IMPERIAL);

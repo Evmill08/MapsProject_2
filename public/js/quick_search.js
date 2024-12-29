@@ -2,6 +2,7 @@
 import { apikey } from "./credentials";
 import { getCategoryCode } from "./categories";
 import { loadMapApi, initializeMap, getMapInstance, getUIInstance } from "./map";
+import { handleRouteService } from "./route_service";
 
 
 const getCategory = (place) => {
@@ -102,36 +103,21 @@ const addMarkersToMap = (locations) => {
 
     locations.forEach((location) => {
         const marker = new H.map.Marker(location.position, { icon });
-        
+    
         // Create formatted content for info bubble
         const content = `
-            <div style="padding: 8px; font-family: Arial, sans-serif; max-width: 200px;">
-                <b style="font-size: 16px; color: #333;">${location.name}</b>
-                <p style="margin: 5px 0; font-size: 14px; color: #666;">${location.address}</p>
-                <p style="margin: 5px 0; font-size: 14px; color: #666;">${(location.distance / 1000).toFixed(1)} km away</p>
-                <button 
-                    style="
-                        background-color: #4A90E2; 
-                        color: white; 
-                        border: none; 
-                        padding: 8px 12px; 
-                        border-radius: 4px; 
-                        cursor: pointer; 
-                        font-size: 14px;
-                        text-align: center;
-                    "
-                    id="get-directions-${location.position.lat}-${location.position.lng}"
-                >
+            <div class="marker-content">
+                <b class="marker-title">${location.name}</b>
+                <p class="marker-address">${location.address}</p>
+                <p class="marker-distance">${(location.distance / 1000).toFixed(1)} km away</p>
+                <button onclick="window.handleDirectionsClick(${location.position.lat}, ${location.position.lng})" class="marker-button">
                     Get Directions
                 </button>
             </div>
         `;
-        
+    
         marker.setData(content);
         group.addObject(marker);
-
-        const buttonId = `get-directions-${location.position.lat}-${location.position.lng}`;
-        document.getElementById(buttonId)?.addEventListener('click', () => getDirections(location.position));
     });
 
     // Add event listener to the group
@@ -159,11 +145,29 @@ const addMarkersToMap = (locations) => {
     }
 };
 
-// For testing
-function getDirections(coords){
-    alert('Providing directions to: ' + coords.lat + ',' + coords.lng);
-    console.log('Providing directions to: ', coords);
-}
+window.handleDirectionsClick = async (lat, lng) => {
+    try {
+        const userLocation = await getUserLocation();
+        const destination = { lat, lng };
+        
+        // Get map instance and clear existing objects
+        const mapInstance = getMapInstance();
+        if (mapInstance?.map) {
+            mapInstance.map.removeObjects(mapInstance.map.getObjects());
+            
+            // Clear any existing info bubbles
+            const ui = getUIInstance();
+            if (ui) {
+                ui.getBubbles().forEach(bubble => ui.removeBubble(bubble));
+            }
+        }
+        
+        await handleRouteService(destination, userLocation);
+    } catch (error) {
+        console.error("Error getting directions:", error);
+    }
+};
+
 
 let debounceTimer;
 export const handleQuickButtonPressed = async (event) => {
