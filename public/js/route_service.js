@@ -80,6 +80,117 @@ function addManueversToMap(route) {
     mapInstance.map.addObject(group);
 }
 
+function addIncidentsToMap(route) {
+    const mapInstance = getMapInstance();
+
+    if (!mapInstance?.map) {
+        console.error("Map not initialized. Cannot add incidents.");
+        return;
+    }
+
+    // Create an icon for incidents with bright red color
+    const incidentIcon = new H.map.Icon(`
+        <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" fill="#FF0000" stroke="white" stroke-width="2"/>
+            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">!</text>
+        </svg>
+    `, { anchor: { x: 12, y: 12 } });
+
+    const incidentsGroup = new H.map.Group();
+
+    route.sections.forEach((section) => {
+        // Skip if no incidents or spans
+        if (!section.incidents || !section.spans) {
+            return;
+        }
+
+        // Get polyline coordinates
+        let poly = H.geo.LineString.fromFlexiblePolyline(
+            section.polyline
+        ).getLatLngAltArray();
+
+        // Process spans that contain incidents
+        section.spans.forEach(span => {
+            if (!span.incidents || !span.incidents.length) {
+                return;
+            }
+
+            // Get location from polyline using span offset
+            const lat = poly[span.offset * 3];
+            const lng = poly[span.offset * 3 + 1];
+
+            if (typeof lat === 'undefined' || typeof lng === 'undefined') {
+                console.warn(`Invalid coordinates at offset ${span.offset}`);
+                return;
+            }
+
+            // Create a marker for each incident in the span
+            span.incidents.forEach(incidentIndex => {
+                const incident = section.incidents[incidentIndex];
+                
+                if (!incident) {
+                    console.warn(`No incident data found for index ${incidentIndex}`);
+                    return;
+                }
+
+                const marker = new H.map.Marker(
+                    { lat, lng },
+                    { icon: incidentIcon }
+                );
+
+                // Add incident details to marker
+                marker.incidentDetails = {
+                    type: incident.type || 'Traffic Incident',
+                    description: incident.description || 'Traffic incident reported',
+                    criticality: incident.criticality || 'unknown',
+                    category: incident.category,
+                    startTime: incident.startTime,
+                    endTime: incident.endTime
+                };
+
+                incidentsGroup.addObject(marker);
+                console.log("Added incident marker:", { lat, lng, incident });
+            });
+        });
+    });
+
+    // Add click listener for incidents
+    incidentsGroup.addEventListener('tap', (evt) => {
+        const marker = evt.target;
+        const incident = marker.incidentDetails;
+        
+        // Create info bubble content
+        const bubbleContent = `
+            <div style="padding: 10px; max-width: 200px;">
+                <strong style="color: #FF0000;">Traffic Incident</strong><br>
+                <hr style="margin: 5px 0;">
+                <strong>Type:</strong> ${incident.type}<br>
+                <strong>Description:</strong> ${incident.description}<br>
+                ${incident.criticality !== 'unknown' ? `<strong>Criticality:</strong> ${incident.criticality}<br>` : ''}
+                ${incident.category ? `<strong>Category:</strong> ${incident.category}<br>` : ''}
+                ${incident.startTime ? `<strong>Start:</strong> ${new Date(incident.startTime).toLocaleString()}<br>` : ''}
+                ${incident.endTime ? `<strong>End:</strong> ${new Date(incident.endTime).toLocaleString()}` : ''}
+            </div>
+        `;
+
+        const bubble = new H.ui.InfoBubble(marker.getGeometry(), {
+            content: bubbleContent
+        });
+
+        const ui = getUIInstance();
+        if (!ui) {
+            console.error("UI not initialized.");
+            return;
+        }
+
+        // Clear any existing bubbles before adding new one
+        ui.getBubbles().forEach(b => ui.removeBubble(b));
+        ui.addBubble(bubble);
+    });
+
+    mapInstance.map.addObject(incidentsGroup);
+}
+
 function toMMSS(duration) {
     return (
         Math.floor(duration / 60) + " minutes " + (duration % 60) + " seconds."
@@ -121,7 +232,9 @@ const calculateRouteFromAtoB = async (platform, dest, origin) => {
             transportMode: "car",
             origin: formattedOrigin,
             destination: formattedDest,
-            return: "polyline,turnByTurnActions,actions,instructions,travelSummary",
+            spans: 'incidents',
+            return: "polyline,turnByTurnActions,actions,instructions,travelSummary,incidents",
+            incidentTypes: 'all'
         };
 
         return new Promise((resolve, reject) => {
@@ -136,13 +249,16 @@ const calculateRouteFromAtoB = async (platform, dest, origin) => {
     }
 }
 
+
 function onSuccess(result, resolve) {
     try {
         if (result.routes && result.routes.length > 0) {
+            console.log("Full route data:", JSON.stringify(result.routes[0], null, 2));
             console.log("Route calculated successfully:", result);
             const route = result.routes[0];
             addRouteShapeToMap(route);
             addManueversToMap(route);
+            addIncidentsToMap(route);
             resolve?.(route);
         } else {
             const error = new Error("No routes found");
