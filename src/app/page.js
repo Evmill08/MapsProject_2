@@ -8,6 +8,8 @@ import '../../styles/MainPage.css'
 import { MapSearch } from "../../public/js/map_search";
 import {handleRouteService } from "../../public/js/route_service";
 import QuickSearchSidebar from './QuickSearch_sidebar';
+import PinpointLocation from "../../public/js/locationPinpoint";
+
 
 export default function Home() {
   const {
@@ -52,6 +54,10 @@ export default function Home() {
             {mapError}
           </div>
         )}
+
+        <div className="location-pinpoint">
+          <PinpointLocation />
+        </div>
 
         <div className="searchBox" id="searchBox">
           <form id="searchForm" onSubmit={(e) => e.preventDefault()}>

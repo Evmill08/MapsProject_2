@@ -349,5 +349,43 @@ body {
     background-color: #2f6db4;
 }
 
+.location-pinpoint {
+    position: absolute;
+    bottom: 32.5%;
+    right: 1.25%;
+    z-index: 1000;
+}
 
+.location-pin-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: white;
+    border-radius: 9999px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    border: none;
+}
 
+.location-pin-button:hover {
+    background-color: #f9fafb;
+}
+
+.location-pin-button:focus {
+    outline: none;
+}
+
+.location-pin-inner {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 9999px;
+    border: 2px solid #9ca3af;
+    background-color: transparent;
+}
+
+.location-pin-inner.active {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+}
