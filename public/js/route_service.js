@@ -31,9 +31,10 @@ function addRouteShapeToMap(route) {
 
 function addManueversToMap(route) {
     const mapInstance = getMapInstance();
+    const ui = getUIInstance();
 
-    if (!mapInstance?.map){
-        console.error("Map not initialized. Cannot add maneuvers.");
+    if (!mapInstance?.map || !ui){
+        console.error("Map or UI not initialized. Cannot add maneuvers.");
         return;
     }
 
@@ -55,27 +56,23 @@ function addManueversToMap(route) {
         let actions = section.actions;
 
         actions.forEach(action => {
-            var marker = new H.map.Marker(
-                {
-                    lat: poly[action.offset * 3],
-                    lng: poly[action.offset * 3 + 1],
-                },
-                {icon: dotIcon}
-            );
-            marker.instruction = action.instruction;
+            var marker = new H.map.Marker({lat: poly[action.offset * 3], lng: poly[action.offset * 3 + 1]}, {icon: dotIcon});
+
+            marker.setData(action.instruction);
             group.addObject(marker);
         });
     });
-            
 
-    group.addEventListener(
-        "tap",
-        function(evt) {
-            mapInstance.map.setCenter(evt.target.getGeometry());
-            openBubble(evt.target.getGeometry(), evt.target.instruction);
-        },
-        false
-    );
+    group.addEventListener('tap', (evt) => {
+        const marker = evt.target;
+        const position = marker.getGeometry();
+        const content = marker.getData();
+
+        const bubble = new H.ui.InfoBubble(position, {content: content});
+
+        ui.getBubbles().forEach(b => ui.removeBubble(b));
+        ui.addBubble(bubble);
+    });
 
     mapInstance.map.addObject(group);
 }

@@ -28,7 +28,7 @@ body {
 .searchBox {
     background-color: white;
     width: 20%; /* Adjust width as necessary */
-    height: auto; /* Adjust height to fit the content */
+    height: auto; /* Ensure it adjusts dynamically */
     z-index: 2000;
     position: absolute;
     top: 2.5%;
@@ -52,23 +52,25 @@ body {
 /* Textarea (Search input) */
 .textarea {
     width: 80%;         /* Set width for textarea to leave room for the button */
-    height: 10px;       /* Set a fixed height (increased for better visibility) */
-    padding: 10px;      /* Add padding */
+    padding: 5px 10px;      /* Add padding */
     background-color: #f0f0f0;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
     color: #333;
-    resize: none;
-    overflow: hidden;
+    resize: none;       /* Prevent manual resizing */
     font-family: 'Noto Sans';
     font-weight: lighter;
     font-stretch: expanded;
-
-    line-height: 10px;  /* Match this value to center text vertically */
-    display: flex;      /* Flexbox layout for centering */
-    align-items: center; /* Center items vertically */
+    line-height: 20px;  /* Adjust line height for better spacing */
+    display: block;     /* Default display for textarea */
+    overflow-wrap: break-word; /* Handle long words gracefully */
+    white-space: pre-wrap; /* Allow wrapping */
+    min-height: 40px;   /* Optional: Set a minimum height */
+    max-height: 100px;  /* Add a maximum height */
+    overflow-y: auto;   /* Enable vertical scrolling when content exceeds max-height */
 }
+
 
 /* Placeholder styling */
 .textarea::placeholder {
@@ -346,5 +348,6 @@ body {
 .marker-button:hover {
     background-color: #2f6db4;
 }
+
 
 
