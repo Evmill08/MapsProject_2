@@ -79,9 +79,37 @@ export const PinpointLocation = () => {
                     {icon: dotIcon}
                 );
 
+                const bubbleContent = `
+                    <div style="
+                        padding: 8px 12px;
+                        font-family: Noto Sans;
+                        font-size: 14px;
+                        color: #333;
+                        background: white;
+                        border-radius: 4px;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                        border: 1px solid #e0e0e0;
+                        min-width: 120px;
+                        text-align: center;
+                    ">
+                        <span style="
+                            font-weight: 500;
+                            display: block;
+                        ">Current Location</span>
+                    </div>
+                `;
+
                 const bubble = new H.ui.InfoBubble(
                     {lat: user_location.lat, lng: user_location.lng},
-                    {content: 'Current Location'}
+                    {
+                        content: bubbleContent,
+                        // Disable the default close button
+                        showCloseButton: false,
+                        // Adjust the pointer position (optional)
+                        pointer: {
+                            length: 15 
+                        }
+                    }
                 );
 
                 mapInstance.map.addObject(marker);
