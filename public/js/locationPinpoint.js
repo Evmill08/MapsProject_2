@@ -26,7 +26,6 @@ export const PinpointLocation = () => {
         const mapInstance = getMapInstance();
         if (!mapInstance?.map) return;
 
-        // Only listen for mapviewchangeend instead of all movement events
         const handleMapInteraction = () => {
             if (isActive) {
                 cleanupLocation();
@@ -34,12 +33,24 @@ export const PinpointLocation = () => {
         };
 
         // Add single event listener for map view changes
-        mapInstance.map.addEventListener('mapviewchangeend', handleMapInteraction);
+        mapInstance.map.addEventListener('drag', handleMapInteraction)
+
+        const handleGlobalClick = (event) => {
+            // If the click is not on our location button and we're active, cleanup
+            if (!event.target.closest('.location-pin-button') && isActive) {
+                cleanupLocation();
+            }
+        };
+
+        document.addEventListener('click', handleGlobalClick);
+
+
 
         return () => {
             if (mapInstance?.map) {
-                mapInstance.map.removeEventListener('mapviewchangeend', handleMapInteraction);
+                mapInstance.map.removeEventListener('drag', handleMapInteraction);
             }
+            document.removeEventListener('click', handleGlobalClick);
         };
     }, [isActive]);
 
