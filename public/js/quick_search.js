@@ -32,7 +32,7 @@ export const getUserLocation = async () => {
 };
 
 const makeApiCall = async (place_code, user_location) => {
-    const url = `https://browse.search.hereapi.com/v1/browse?at=${user_location.lat},${user_location.lng}&categories=${place_code}&limit=10&apikey=${apikey}`;
+    const url = `https://browse.search.hereapi.com/v1/browse?at=${user_location.lat},${user_location.lng}&categories=${place_code}&limit=20&apikey=${apikey}`;
     try {
         const response = await fetch(url);
         const data = await response.json();
@@ -72,7 +72,7 @@ const makeMultipleApiCalls = async (place_codes, user_location) => {
         // Convert back to array and sort by distance
         return Array.from(uniqueResults.values())
             .sort((a, b) => a.distance - b.distance)
-            .slice(0, 20); // Limit to top 20 closest results
+            .slice(0, 20); 
     } catch (error) {
         console.error("Error making multiple API calls:", error);
         return [];

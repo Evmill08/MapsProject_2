@@ -120,10 +120,6 @@ export default function Home() {
           <li><button type="button" className="moreButton" onClick={() => setIsSideBarOpen(true)}>More</button></li>
         </ul>
 
-        <div className="testButtonContainer">
-          <button type='button' className="testRouting" onClick={(e) => handleRouteService({ lat: 39.57659438763478, lng: -76.07009415410397 },{ lat: 42.338281835372136, lng: -71.02912797431681 })}>Test Routes</button>
-        </div>
-
         <QuickSearchSidebar isOpen={isSideBarOpen} onClose={() => setIsSideBarOpen(false)}/>
       </div>
     </>

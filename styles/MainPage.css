@@ -287,30 +287,6 @@ body {
     border-color: #bbbbbb;
 }
 
-.testButtonContainer {
-    position: absolute;
-    top: 20px; /* Adjust to position container relative to the viewport or parent */
-    right: 10px; /* Align container to the right */
-    display: flex; /* Use flexbox for centering */
-    justify-content: flex-end; /* Align content to the end (right) */
-    align-items: center; /* Center content vertically */
-    width: auto; /* Allow container to size dynamically */
-    z-index: 3000; /* Ensure it stays on top of other elements */
-}
-
-/* Test Routing button */
-.testRouting {
-    padding: 10px 15px; /* Adjust padding for better button size */
-    background-color: #007bff; /* Button background color */
-    color: white; /* Text color */
-    border: none; /* Remove default border */
-    border-radius: 5px; /* Add rounded corners */
-    cursor: pointer; /* Change cursor to pointer on hover */
-    font-size: 14px; /* Set font size */
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); /* Add subtle shadow */
-    transition: background-color 0.3s ease; /* Smooth hover effect */
-}
-
 
 /* Marker content */
 .marker-content {
