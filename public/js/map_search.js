@@ -1,6 +1,7 @@
 import { apikey } from "./credentials";
 import { getUserLocation } from "./quick_search";
 import { useState, useCallback, useEffect } from 'react';
+import { direct_search } from './direct_search';
 
 export const MapSearch = () => {
     const [query, setQuery] = useState('');
@@ -71,6 +72,8 @@ export const MapSearch = () => {
         setQuery(suggestion.title);
         setSuggestions([]);
         setShowSuggestions(false);
+        //where we make the call to the direct_search function to place the marker
+        direct_search(suggestion);
     };
 
     return {
