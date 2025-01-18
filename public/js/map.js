@@ -111,16 +111,25 @@ export const loadScript = (src) => {
   });
 };
 
+
 const loadScriptWithRetry = async (src, retries = 5) => {
   try {
     await loadScript(src);
   } catch (error) {
-    if (retries > 0 && error.message.includes('429')) {
-      console.warn("Rate limit exceeded. Retrying in 1 second...");
+    if (retries > 0) {
+      // Check if error is a Response object with status 429
+      if (error instanceof Response && error.status === 429) {
+        console.warn("Rate limit exceeded. Retrying in 1 second...");
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return loadScriptWithRetry(src, retries - 1);
+      }
+      
+      // Generic retry for script loading failures
+      console.warn(`Failed to load script: ${src}. Retrying... (${retries} attempts remaining)`);
       await new Promise(resolve => setTimeout(resolve, 1000));
       return loadScriptWithRetry(src, retries - 1);
     }
-    throw error;
+    throw new Error(`Failed to load script after multiple retries: ${src}`);
   }
 };
 
