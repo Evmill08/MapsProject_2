@@ -1,25 +1,25 @@
 import { apikey } from "./credentials";
+import { getUserLocation } from "./quick_search";
 
 let map = null;
 let ui = null;
 let platform = null;
 
 // Function to initialize the map
-export const initializeMap = () => {
-  return new Promise((resolve, reject) => {
+export const initializeMap = async () => {
+  return new Promise(async (resolve, reject) => {
     try {
-      if (map){
+      if (map) {
         resolve(map);
         return;
       }
 
       platform = new H.service.Platform({
-        apikey: apikey, 
+        apikey: apikey,
       });
 
       // Create default map layers
       const defaultLayers = platform.createDefaultLayers();
-
 
       // Get the map container element
       const mapContainer = document.getElementById("mapContainer");
@@ -29,13 +29,16 @@ export const initializeMap = () => {
         return;
       }
 
+      // Wait for user location
+      const user_location = await getUserLocation();
+
       map = new H.Map(
         mapContainer,
         defaultLayers.vector.normal.map,
         {
           zoom: 10,
-          center: { lat: 39.6, lng: -76.1 },
-          pixelRatio: window.devicePixelRatio || 1
+          center: { lat: user_location.lat || 39.6, lng: user_location.lng || -76.1 },
+          pixelRatio: window.devicePixelRatio || 1,
         }
       );
 
@@ -46,10 +49,10 @@ export const initializeMap = () => {
       const behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
 
       // Enable dynamic resizing of the map
-      window.addEventListener('resize', () => map.getViewPort().resize());      
+      window.addEventListener("resize", () => map.getViewPort().resize());
 
       const zoomRectangle = new H.ui.ZoomRectangle({
-        alignment: H.ui.LayoutAlignment.RIGHT_BOTTOM
+        alignment: H.ui.LayoutAlignment.RIGHT_BOTTOM,
       });
 
       function createMarkerIcon(color) {
@@ -76,12 +79,12 @@ export const initializeMap = () => {
         splitIcon: splitIcon,
         lineStyle: {
           strokeColor: "rgba(95, 229, 218, 0.5)",
-          lineWidth: 6
+          lineWidth: 6,
         },
-        alignment: H.ui.LayoutAlignment.RIGHT_BOTTOM
+        alignment: H.ui.LayoutAlignment.RIGHT_BOTTOM,
       });
 
-      ui.addControl('rectangle', zoomRectangle);
+      ui.addControl("rectangle", zoomRectangle);
       ui.addControl("distancemeasurement", distanceMeasurementTool);
       ui.setUnitSystem(H.ui.UnitSystem.IMPERIAL);
 
@@ -89,8 +92,8 @@ export const initializeMap = () => {
     } catch (error) {
       reject(error);
     }
-  })
-}
+  });
+};
 
 export const getMapInstance = () => ({
   map,
